@@ -46,8 +46,8 @@ const delUser = function (id) {
 //登录
 const Login = async (ctx) => {
   //拿到账号和密码
-  let username = ctx.request.body.name;
-  let password = sha1(ctx.request.body.pass); //解密
+  let username = ctx.request.body.username;
+  let password = sha1(ctx.request.body.password); //解密
   let doc = await findUser(username);
   if (!doc) {
     ctx.body = {
@@ -87,8 +87,8 @@ const Login = async (ctx) => {
 //注册
 const Reg = async (ctx) => {
   let user = new User({
-    username: ctx.request.body.name,
-    password: sha1(ctx.request.body.pass), //加密
+    username: ctx.request.body.username,
+    password: sha1(ctx.request.body.password), //加密
     token: createToken(this.username), //创建token并存入数据库
   });
   //将objectid转换为用户创建时间(可以不用)
