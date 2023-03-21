@@ -72,8 +72,8 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: '框架', icon: 'link' }
+        path: 'https://panjiachen.gitee.io/vue-element-admin-site/zh/guide/',
+        meta: { title: '框架', icon: 'link' } 
       }
     ]
   },

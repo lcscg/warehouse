@@ -51,8 +51,8 @@ const Login = async (ctx) => {
   let doc = await findUser(username);
   if (!doc) {
     ctx.body = {
-      code:200,
-      msg:'检查到用户名不存在'
+      code: 200,
+      msg: "检查到用户名不存在",
     };
   } else if (doc.password === password) {
     //生成一个新的token,并存到数据库
@@ -73,14 +73,12 @@ const Login = async (ctx) => {
       username,
       token, //登录成功要创建一个新的token,应该存入数据库
       create_time: doc.create_time,
-      msg:'登录成功'
+      msg: "登录成功",
     };
   } else {
-    console.log("密码错误!");
-    
     ctx.body = {
-      code:200,
-      success: false,
+      code: 400,
+      msg: "密码错误",
     };
   }
 };
@@ -128,9 +126,9 @@ const Reg = async (ctx) => {
 const GetAllUsers = async (ctx) => {
   //查询所有用户信息
   let doc = await findAllUsers();
-  
+
   ctx.body = {
-    code:200,
+    code: 200,
     succsess: "成功",
     result: doc,
   };
@@ -140,9 +138,9 @@ const DelUser = async (ctx) => {
   //拿到要删除的用户id
   let id = ctx.request.body.id;
   await delUser(id);
-  
+
   ctx.body = {
-    code:200,
+    code: 200,
     success: "删除成功",
   };
 };
