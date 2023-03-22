@@ -10,6 +10,8 @@ const bodyParser = require("koa-bodyparser");
 app.use(bodyParser());
 //引入数据库操作方法
 const UserController = require("./controller/user.js");
+const GoodsController = require("./controller/goods.js");
+
 //checkToken作为中间件存在
 const checkToken = require("./token/checkToken.js");
 //登录
@@ -24,11 +26,29 @@ userRouter.get("/user", checkToken, UserController.GetAllUsers);
 //删除某个用户
 const delUserRouter = new Router();
 delUserRouter.post("/delUser", checkToken, UserController.DelUser);
+
+
+const getGoodsRouter = new Router();
+getGoodsRouter.get("/getGoods", checkToken, GoodsController.getGoods);
+const updateGoodsRouter = new Router();
+updateGoodsRouter.post("/updateGoods", checkToken, GoodsController.updateGoods);
+const DelGoodsRouter = new Router();
+DelGoodsRouter.post("/delGoods", checkToken, GoodsController.DelGoods);
+const addGoodsRouter = new Router();
+addGoodsRouter.post("/addGoods", checkToken, GoodsController.addGoods);
+
+router.use("/api", getGoodsRouter.routes(), getGoodsRouter.allowedMethods());
+router.use("/api", updateGoodsRouter.routes(), updateGoodsRouter.allowedMethods());
+router.use("/api", DelGoodsRouter.routes(), DelGoodsRouter.allowedMethods());
+router.use("/api", addGoodsRouter.routes(), addGoodsRouter.allowedMethods());
+
 //装载上面四个子路由
 router.use("/api", loginRouter.routes(), loginRouter.allowedMethods());
 router.use("/api", registerRouter.routes(), registerRouter.allowedMethods());
 router.use("/api", userRouter.routes(), userRouter.allowedMethods());
 router.use("/api", delUserRouter.routes(), delUserRouter.allowedMethods());
+
+
 //加载路由中间件
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(8888, () => {

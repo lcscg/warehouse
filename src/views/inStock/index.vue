@@ -126,6 +126,13 @@
 </template>
 
 <script>
+import {
+  //   getOwner,
+  // getGenre,
+  getGoods,
+  updateGoods,
+  delGoods,
+} from "@/api/storehouse.js";
 export default {
   data() {
     return {
@@ -194,12 +201,12 @@ export default {
     };
   },
   created() {
-    getOwner().then((res) => {
-      this.ownerOptions = res.data;
-    });
-    getGenre().then((res) => {
-      this.genreOptions = res.data;
-    });
+    // getOwner().then((res) => {
+    //   this.ownerOptions = res.data;
+    // });
+    // getGenre().then((res) => {
+    //   this.genreOptions = res.data;
+    // });
     this.init();
   },
   watch: {

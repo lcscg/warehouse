@@ -24,6 +24,7 @@ const findAllUsers = () => {
   return new Promise((resolve, reject) => {
     User.find()
       .then((user) => {
+        console.log(111111);
         resolve(user);
       })
       .catch((err) => {
@@ -49,9 +50,11 @@ const Login = async (ctx) => {
   let username = ctx.request.body.username;
   let password = sha1(ctx.request.body.password); //解密
   let doc = await findUser(username);
+  const data = await findAllUsers()
+  console.log(data);
   if (!doc) {
     ctx.body = {
-      code: 200,
+      code: 400,
       msg: "检查到用户名不存在",
     };
   } else if (doc.password === password) {
@@ -84,6 +87,7 @@ const Login = async (ctx) => {
 };
 //注册
 const Reg = async (ctx) => {
+  console.log(ctx.request.body);
   let user = new User({
     username: ctx.request.body.username,
     password: sha1(ctx.request.body.password), //加密
@@ -93,10 +97,8 @@ const Reg = async (ctx) => {
   user.create_time = moment(objectIdToTimestamp(user._id)).format(
     "YYYY-MM-DD HH:mm:ss"
   );
-  console.log("user====", user);
   let doc = await findUser(user.username);
   if (doc) {
-    console.log("用户名已经存在");
     ctx.body = {
       code: 400,
       msg: "用户名已经存在",
