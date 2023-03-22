@@ -131,7 +131,7 @@ const GetAllUsers = async (ctx) => {
 
   ctx.body = {
     code: 200,
-    succsess: "成功",
+    msg: "成功",
     result: doc,
   };
 };
@@ -140,10 +140,9 @@ const DelUser = async (ctx) => {
   //拿到要删除的用户id
   let id = ctx.request.body.id;
   await delUser(id);
-
   ctx.body = {
     code: 200,
-    success: "删除成功",
+    msg: "删除成功",
   };
 };
 module.exports = {

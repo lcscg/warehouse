@@ -55,6 +55,7 @@ export const constantRoutes = [
     }]
   },
 
+  
   {
     path: '/inStock',
     component: Layout,
@@ -64,6 +65,18 @@ export const constantRoutes = [
         name: 'inStock',
         component: () => import('@/views/inStock/index'),
         meta: { title: '库存', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/configuration',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'configuration',
+        component: () => import('@/views/configuration/index'),
+        meta: { title: '配置项', icon: 'form' }
       }
     ]
   },

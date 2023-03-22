@@ -23,15 +23,31 @@ const goodSchema = mongoose.Schema({
   owner: String,
   genre: String,
   num: Number,
-  purchasePrice: Number,
+  purchasePrice: {
+    type: String,
+    required: true,
+    get: function (price) {
+      return new Intl.NumberFormat("zh-CN", {
+        style: "currency",
+        currency: "CNY",
+      }).format(price);
+    },
+  },
   sellNum: Number,
   totalNum: Number,
   remark: String,
-  createTime: Date 
+  createTime: Date,
 });
+
+const configurationSchema = mongoose.Schema({
+  type: Number, // 0:所属人,1:类型
+  configurationData: Array,
+});
+
 //根据schema生成model
 const model = {
   User: mongoose.model("User", userSchema),
   Goods: mongoose.model("Goods", goodSchema),
+  Configuration: mongoose.model("Configuration", configurationSchema),
 };
 module.exports = model;

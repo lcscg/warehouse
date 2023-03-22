@@ -19,6 +19,7 @@ service.interceptors.request.use(
       // please modify it according to the actual situation
       config.headers["Authorization"] = sessionStorage.getItem("token");
     }
+    console.log(config);
     return config;
   },
   (error) => {

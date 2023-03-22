@@ -70,6 +70,7 @@ const actions = {
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
         removeToken() // must remove  token  first
+        sessionStorage.removeItem('token')
         resetRouter()
         commit('RESET_STATE')
         resolve()

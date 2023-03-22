@@ -1,21 +1,5 @@
 import request from '@/utils/request'
 
-export function getOwner(params) {
-  return request({
-    url: '/api/getOwner',
-    method: 'get',
-    params
-  })
-}
-
-export function getGenre(params) {
-  return request({
-    url: '/api/getGenre',
-    method: 'get',
-    params
-  })
-}
-
 export function getGoods(params) {
   return request({
     url: '/api/getGoods',
@@ -24,18 +8,26 @@ export function getGoods(params) {
   })
 }
 
-export function updateGoods(params) {
+export function updateGoods(data) {
   return request({
     url: '/api/updateGoods',
     method: 'post',
-    params
+    data
   })
 }
 
-export function delGoods(params) {
+export function delGoods(data) {
   return request({
     url: '/api/delGoods',
     method: 'post',
-    params
+    data
+  })
+}
+
+export function addGoods(data) {
+  return request({
+    url: '/api/addGoods',
+    method: 'Post',
+    data
   })
 }

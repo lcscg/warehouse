@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form label-width="80px">
       <el-row>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="型号">
             <el-input
               placeholder="请输入型号"
@@ -11,7 +11,7 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="所属人">
             <el-select
               v-model="query.owner"
@@ -27,7 +27,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="类型">
             <el-select v-model="query.genre" placeholder="请选择类型" clearable>
               <el-option
@@ -38,6 +38,20 @@
               ></el-option>
             </el-select>
           </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-button type="primary" @click="handleAdd" style="margin-left: 30px"
+            >新增</el-button
+          >
+          <el-button
+            type="primary"
+            @click="this.$options.data().query"
+            style="margin-left: 30px"
+            >重置</el-button
+          >
+          <el-button type="primary" @click="init" style="margin-left: 30px"
+            >刷新</el-button
+          >
         </el-col>
       </el-row>
     </el-form>
@@ -50,9 +64,13 @@
         :width="item.width || 160"
       >
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column fixed="right" label="操作" width="120">
         <template slot-scope="scope">
-          <el-button type="danger" @click="handleDel(scope.row)" size="small"
+          <el-button
+            type="text"
+            style="color: red"
+            @click="handleDel(scope.row)"
+            size="small"
             >删除</el-button
           >
           <el-button type="text" size="small" @click="handleEdit(scope.row)"
@@ -99,17 +117,14 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="库存数量" prop="num">
-          <el-input v-model="formData.num"></el-input>
-        </el-form-item>
         <el-form-item label="买入价格" prop="purchasePrice">
           <el-input v-model="formData.purchasePrice"></el-input>
         </el-form-item>
+        <el-form-item label="总数量" prop="totalNum">
+          <el-input v-model="formData.totalNum"></el-input>
+        </el-form-item>
         <el-form-item label="卖出数量" prop="sellNum">
           <el-input v-model="formData.sellNum"></el-input>
-        </el-form-item>
-        <el-form-item label="卖出数量" prop="totalNum">
-          <el-input v-model="formData.totalNum"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="formData.remark" type="textarea" :rows="2">
@@ -126,13 +141,9 @@
 </template>
 
 <script>
-import {
-  //   getOwner,
-  // getGenre,
-  getGoods,
-  updateGoods,
-  delGoods,
-} from "@/api/storehouse.js";
+import { addGoods, getGoods, updateGoods, delGoods } from "@/api/storehouse.js";
+import { getConfiguration } from "@/api/configuration.js";
+
 export default {
   data() {
     return {
@@ -176,7 +187,7 @@ export default {
         },
         {
           prop: "totalNum",
-          label: "卖出数量",
+          label: "总数量",
         },
         {
           prop: "remark",
@@ -186,32 +197,35 @@ export default {
       tableData: [],
       formBox: false,
       formData: {
-        type: undefined,
-        owner: undefined,
-        genre: undefined,
-        num: undefined,
-        purchasePrice: undefined,
-        sellNum: undefined,
-        totalNum: undefined,
-        remark: undefined,
+        type: "a1",
+        owner: "自己",
+        genre: "翻新",
+        purchasePrice: 10,
+        sellNum: 100,
+        totalNum: 1000,
+        remark: "测试",
       },
       rules: {
         name: [{ required: true, message: "请输入活动名称", trigger: "blur" }],
       },
+      formStatus: 0,
     };
   },
   created() {
-    // getOwner().then((res) => {
-    //   this.ownerOptions = res.data;
-    // });
-    // getGenre().then((res) => {
-    //   this.genreOptions = res.data;
-    // });
+    getConfiguration({ type: 0 }).then((res) => {
+      this.ownerOptions = res.data;
+    });
+    getConfiguration({ type: 1 }).then((res) => {
+      this.genreOptions = res.data;
+    });
     this.init();
   },
   watch: {
-    query() {
-      this.init();
+    query: {
+      handler() {
+        this.init();
+      },
+      deep: true,
     },
   },
   methods: {
@@ -227,8 +241,9 @@ export default {
         type: "warning",
       })
         .then(() => {
-          delGoods(row.id).then((res) => {
+          delGoods({ id: row._id }).then((res) => {
             this.$message.success(res.msg);
+            this.init();
           });
         })
         .catch(() => {
@@ -238,15 +253,24 @@ export default {
           });
         });
     },
+    handleAdd() {
+      this.formData = this.$options.data().formData;
+      this.formStatus = 0;
+      this.formBox = true;
+    },
     handleEdit(row) {
       this.formData = row;
+      this.formStatus = 1;
       this.formBox = true;
     },
     submitForm() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          updateGoods(this.formData).then((res) => {
+          const fn = this.formStatus === 0 ? addGoods : updateGoods;
+          fn(this.formData).then((res) => {
             this.$message.success(res.msg);
+            this.init();
+            this.formBox = false;
           });
         } else {
           return false;

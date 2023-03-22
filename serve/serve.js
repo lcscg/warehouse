@@ -11,6 +11,7 @@ app.use(bodyParser());
 //引入数据库操作方法
 const UserController = require("./controller/user.js");
 const GoodsController = require("./controller/goods.js");
+const Configuration = require("./controller/configuration.js");
 
 //checkToken作为中间件存在
 const checkToken = require("./token/checkToken.js");
@@ -27,7 +28,7 @@ userRouter.get("/user", checkToken, UserController.GetAllUsers);
 const delUserRouter = new Router();
 delUserRouter.post("/delUser", checkToken, UserController.DelUser);
 
-
+// 更新仓库
 const getGoodsRouter = new Router();
 getGoodsRouter.get("/getGoods", checkToken, GoodsController.getGoods);
 const updateGoodsRouter = new Router();
@@ -36,6 +37,16 @@ const DelGoodsRouter = new Router();
 DelGoodsRouter.post("/delGoods", checkToken, GoodsController.DelGoods);
 const addGoodsRouter = new Router();
 addGoodsRouter.post("/addGoods", checkToken, GoodsController.addGoods);
+
+// 配置项
+const getConfigurationRouter = new Router();
+getConfigurationRouter.get("/getConfiguration", checkToken, Configuration.getConfiguration);
+const updateConfigurationRouter = new Router();
+updateConfigurationRouter.post("/updateConfiguration", checkToken, Configuration.updateConfiguration);
+
+router.use("/api", getConfigurationRouter.routes(), getConfigurationRouter.allowedMethods());
+router.use("/api", updateConfigurationRouter.routes(), updateConfigurationRouter.allowedMethods());
+
 
 router.use("/api", getGoodsRouter.routes(), getGoodsRouter.allowedMethods());
 router.use("/api", updateGoodsRouter.routes(), updateGoodsRouter.allowedMethods());
