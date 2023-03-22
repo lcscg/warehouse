@@ -29,7 +29,7 @@
           </el-row>
         </el-form-item>
         <el-form-item>
-          <el-button @click="addDomain">新增</el-button>
+          <el-button type="primary" @click="addDomain">新增</el-button>
         </el-form-item>
       </el-form>
 
@@ -76,7 +76,9 @@ export default {
       });
     },
     submit() {
-      const params = {
+      this.$refs.dynamicValidateForm.validate((valid) => {
+        if (valid) {
+          const params = {
         type: this.type,
         data: this.dynamicValidateForm.domains,
       };
@@ -84,6 +86,9 @@ export default {
         this.$message.success(res.msg);
         this.status = false;
       });
+        }
+      })
+     
     },
     removeDomain(item) {
       var index = this.dynamicValidateForm.domains.indexOf(item);
