@@ -5,18 +5,17 @@ const app = new Koa();
 const Router = require("koa-router");
 //父路由
 const router = new Router();
-//bodyparser:该中间件用于post请求的数据
-const bodyParser = require("koa-bodyparser");
 const koaBody = require("koa-body");
-const static = require("koa-static")
+const static = require("koa-static");
 //__dirname为文件所在的当前目录，app.js所在就是为根目录，这样我们可以直接localhost:3001/文件名，以此来读取文件
-app.use(static(__dirname + '/download', {
-  index: false,    // 默认为true  访问的文件为index.html  可以修改为别的文件名或者false
-  hidden: false,   // 是否同意传输隐藏文件
-  defer: true      // 如果为true，则在返回next()之后进行服务，从而允许后续中间件先进行响应
-}))
+app.use(
+  static(__dirname + "/download", {
+    index: false, // 默认为true  访问的文件为index.html  可以修改为别的文件名或者false
+    hidden: false, // 是否同意传输隐藏文件
+    defer: true, // 如果为true，则在返回next()之后进行服务，从而允许后续中间件先进行响应
+  })
+);
 // 注册中间件
-app.use(bodyParser());
 app.use(
   koaBody({
     multipart: true,
@@ -90,11 +89,7 @@ router.use(
   updateGoodsRouter.routes(),
   updateGoodsRouter.allowedMethods()
 );
-router.use(
-  "/api",
-  exportRouter.routes(),
-  exportRouter.allowedMethods()
-);
+router.use("/api", exportRouter.routes(), exportRouter.allowedMethods());
 router.use("/api", DelGoodsRouter.routes(), DelGoodsRouter.allowedMethods());
 router.use("/api", addGoodsRouter.routes(), addGoodsRouter.allowedMethods());
 router.use("/api", uploadRouter.routes(), uploadRouter.allowedMethods());

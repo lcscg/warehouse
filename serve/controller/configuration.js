@@ -16,9 +16,7 @@ const findConfiguration = (type) => {
 // 查询
 const getConfiguration = async (ctx) => {
   const query = ctx.request.query;
-  console.log(query);
   const data = await findConfiguration(query);
-  console.log(data);
   ctx.body = {
     code: 200,
     data:data[0].configurationData,

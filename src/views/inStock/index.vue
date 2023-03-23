@@ -41,35 +41,38 @@
         </el-col>
         <el-col :span="6">
           <el-button type="primary" @click="handleAdd" style="margin-left: 30px"
-            >新增</el-button
+            >新 增</el-button
           >
           <el-button
             type="primary"
             @click="this.$options.data().query"
             style="margin-left: 30px"
-            >重置</el-button
+            >重 置</el-button
           >
           <el-button type="primary" @click="init" style="margin-left: 30px"
-            >刷新</el-button
-          >
-          <el-upload
-            action="/api/upload"
-            :file-list="fileList"
-            :show-file-list="false"
-            accept=".xlsx"
-            :on-success="handleSuccess"
-            :headers="{ Authorization: token }"
-          >
-            <el-button size="small" type="primary">导入</el-button>
-          </el-upload>
-          <el-button size="small" type="primary" @click="exportExcel"
-            >导出</el-button
+            >刷 新</el-button
           >
         </el-col>
+      </el-row>
+      <el-row style="display:flex;justify-content: right;margin-right: 50px;">
+        <el-upload
+          action="/api/upload"
+          :file-list="fileList"
+          :show-file-list="false"
+          accept=".xlsx"
+          :on-success="handleSuccess"
+          :headers="{ Authorization: token }"
+        >
+          <el-button type="primary">导 入</el-button>
+        </el-upload>
+        <el-button type="primary" @click="exportExcel" style="margin-left: 30px"
+          >导 出</el-button
+        >
       </el-row>
     </el-form>
     <el-table :data="tableData">
       <el-table-column
+      show-overflow-tooltip
         v-for="(item, index) in tableColumn"
         :key="index"
         :prop="item.prop"
@@ -254,7 +257,7 @@ export default {
       exportExcel()
         .then((res) => {
           console.log(res);
-         window.open(res.url)
+          window.open(res.url);
         })
         .catch((error) => {
           console.error(error);

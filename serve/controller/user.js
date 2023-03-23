@@ -24,7 +24,6 @@ const findAllUsers = () => {
   return new Promise((resolve, reject) => {
     User.find()
       .then((user) => {
-        console.log(111111);
         resolve(user);
       })
       .catch((err) => {
@@ -51,7 +50,6 @@ const Login = async (ctx) => {
   let password = sha1(ctx.request.body.password); //解密
   let doc = await findUser(username);
   const data = await findAllUsers()
-  console.log(data);
   if (!doc) {
     ctx.body = {
       code: 400,
@@ -87,7 +85,6 @@ const Login = async (ctx) => {
 };
 //注册
 const Reg = async (ctx) => {
-  console.log(ctx.request.body);
   let user = new User({
     username: ctx.request.body.username,
     password: sha1(ctx.request.body.password), //加密

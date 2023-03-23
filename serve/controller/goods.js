@@ -47,6 +47,7 @@ const delGoods = function (id) {
 //删除某个
 const DelGoods = async (ctx) => {
   //拿到要删除的用户id
+  console.log(1111111111111);
   let id = ctx.request.body.id;
   await delGoods(id);
   ctx.body = {
@@ -167,7 +168,6 @@ const upload = async (ctx) => {
           // 定义要删除的文件路径
           const filePath = path.join(__dirname, "../fileUpload/" + getRes.name);
           // 确认文件存在
-          console.log("filePath", filePath);
           if (fs.existsSync(filePath)) {
             // 删除文件
             fs.unlink(filePath, (err) => {
