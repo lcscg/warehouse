@@ -7,7 +7,24 @@ const Router = require("koa-router");
 const router = new Router();
 //bodyparser:该中间件用于post请求的数据
 const bodyParser = require("koa-bodyparser");
+const koaBody = require("koa-body");
+const static = require("koa-static")
+//__dirname为文件所在的当前目录，app.js所在就是为根目录，这样我们可以直接localhost:3001/文件名，以此来读取文件
+app.use(static(__dirname + '/download', {
+  index: false,    // 默认为true  访问的文件为index.html  可以修改为别的文件名或者false
+  hidden: false,   // 是否同意传输隐藏文件
+  defer: true      // 如果为true，则在返回next()之后进行服务，从而允许后续中间件先进行响应
+}))
+// 注册中间件
 app.use(bodyParser());
+app.use(
+  koaBody({
+    multipart: true,
+    formidable: {
+      maxFileSize: 200 * 1024 * 1024, // 设置上传文件大小限制，默认格式: 2MB
+    },
+  })
+);
 //引入数据库操作方法
 const UserController = require("./controller/user.js");
 const GoodsController = require("./controller/goods.js");
@@ -37,28 +54,56 @@ const DelGoodsRouter = new Router();
 DelGoodsRouter.post("/delGoods", checkToken, GoodsController.DelGoods);
 const addGoodsRouter = new Router();
 addGoodsRouter.post("/addGoods", checkToken, GoodsController.addGoods);
+const uploadRouter = new Router();
+uploadRouter.post("/upload", checkToken, GoodsController.upload);
+const exportRouter = new Router();
+exportRouter.get("/exportExcel", checkToken, GoodsController.exportExcel);
 
 // 配置项
 const getConfigurationRouter = new Router();
-getConfigurationRouter.get("/getConfiguration", checkToken, Configuration.getConfiguration);
+getConfigurationRouter.get(
+  "/getConfiguration",
+  checkToken,
+  Configuration.getConfiguration
+);
 const updateConfigurationRouter = new Router();
-updateConfigurationRouter.post("/updateConfiguration", checkToken, Configuration.updateConfiguration);
+updateConfigurationRouter.post(
+  "/updateConfiguration",
+  checkToken,
+  Configuration.updateConfiguration
+);
 
-router.use("/api", getConfigurationRouter.routes(), getConfigurationRouter.allowedMethods());
-router.use("/api", updateConfigurationRouter.routes(), updateConfigurationRouter.allowedMethods());
-
+router.use(
+  "/api",
+  getConfigurationRouter.routes(),
+  getConfigurationRouter.allowedMethods()
+);
+router.use(
+  "/api",
+  updateConfigurationRouter.routes(),
+  updateConfigurationRouter.allowedMethods()
+);
 
 router.use("/api", getGoodsRouter.routes(), getGoodsRouter.allowedMethods());
-router.use("/api", updateGoodsRouter.routes(), updateGoodsRouter.allowedMethods());
+router.use(
+  "/api",
+  updateGoodsRouter.routes(),
+  updateGoodsRouter.allowedMethods()
+);
+router.use(
+  "/api",
+  exportRouter.routes(),
+  exportRouter.allowedMethods()
+);
 router.use("/api", DelGoodsRouter.routes(), DelGoodsRouter.allowedMethods());
 router.use("/api", addGoodsRouter.routes(), addGoodsRouter.allowedMethods());
+router.use("/api", uploadRouter.routes(), uploadRouter.allowedMethods());
 
 //装载上面四个子路由
 router.use("/api", loginRouter.routes(), loginRouter.allowedMethods());
 router.use("/api", registerRouter.routes(), registerRouter.allowedMethods());
 router.use("/api", userRouter.routes(), userRouter.allowedMethods());
 router.use("/api", delUserRouter.routes(), delUserRouter.allowedMethods());
-
 
 //加载路由中间件
 app.use(router.routes()).use(router.allowedMethods());

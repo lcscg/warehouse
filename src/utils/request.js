@@ -28,7 +28,8 @@ service.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
+// 路由白名单
+const writeRouter=[]
 // response interceptor
 service.interceptors.response.use(
   /**
@@ -43,7 +44,10 @@ service.interceptors.response.use(
    */
   (response) => {
     const res = response.data;
-
+    console.log(writeRouter.includes(response.config.url));
+    if (writeRouter.includes(response.config.url)) {
+      return response
+    }
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 200) {
       Message({

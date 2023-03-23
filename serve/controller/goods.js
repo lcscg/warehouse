@@ -1,7 +1,12 @@
 const Goods = require("../db/db").Goods;
 //下面这两个包用来生成时间
+const path = require("path");
+const fs = require("fs");
 const moment = require("moment");
+const uploadExcelSrv = require("../xlsx/uploadExcelSrv");
+const exportExcelSrv = require("../xlsx/exportExcelSrv");
 const objectIdToTimestamp = require("objectid-to-timestamp");
+const { set } = require("nprogress");
 //数据库的操作
 //根据条件查找
 const findGoods = (type) => {
@@ -54,7 +59,6 @@ const getGoods = async (ctx) => {
   const query = ctx.request.query;
   if (query.type) query.type = { $regex: new RegExp(query.type, "i") };
   if (query.type || query.owner || query.genre) {
-    console.log("query===", query);
     const data = await findGoods(query);
     ctx.body = {
       code: 200,
@@ -84,14 +88,12 @@ const updateGoods = async (ctx) => {
   await new Promise((resolve, reject) => {
     Goods.updateOne({ id }, update).then((res) => {
       if (res.acknowledged && res.modifiedCount == 1) {
-        console.log(11111111);
         ctx.body = {
           code: 200,
           msg: "修改成功",
         };
         resolve();
       } else {
-        console.log(2222222);
         ctx.body = {
           code: 400,
           msg: "修改失败",
@@ -120,7 +122,6 @@ const addGoods = async (ctx) => {
     goods
       .save()
       .then((res) => {
-        console.log("res", res);
         ctx.body = {
           code: 200,
           msg: "创建成功",
@@ -128,7 +129,6 @@ const addGoods = async (ctx) => {
         resolve();
       })
       .catch((err) => {
-        console.log("err", err);
         ctx.body = {
           code: 400,
           msg: err,
@@ -137,9 +137,97 @@ const addGoods = async (ctx) => {
       });
   });
 };
+// 导入excel
+const upload = async (ctx) => {
+  const getRes = await uploadExcelSrv.getExcelObjs(ctx);
+  await new Promise((resolve, reject) => {
+    if (getRes.status) {
+      if (getRes.datas.length > 1) {
+        console.log("暂时不支持多个sheet存在");
+      } else {
+        //得到的是数组
+        const objs = getRes.datas[0];
+        const data = objs.map((item) => {
+          return {
+            type: item["型号"],
+            owner: item["所属人"],
+            genre: item["类型"],
+            num: item["库存数量"],
+            purchasePrice: item["买入价格"],
+            sellNum: item["卖出数量"],
+            totalNum: item["总数量"],
+            remark: item["备注"],
+          };
+        });
+        Goods.insertMany(data).then((res) => {
+          ctx.body = {
+            code: 200,
+            msg: "导入成功",
+          };
+          // 定义要删除的文件路径
+          const filePath = path.join(__dirname, "../fileUpload/" + getRes.name);
+          // 确认文件存在
+          console.log("filePath", filePath);
+          if (fs.existsSync(filePath)) {
+            // 删除文件
+            fs.unlink(filePath, (err) => {
+              if (err) {
+                console.error(err);
+                return;
+              }
+              console.log("文件已删除");
+            });
+          } else {
+            console.log("文件不存在");
+          }
+          resolve();
+        });
+      }
+    }
+  });
+};
+// 导出excel
+const exportExcel = async (ctx) => {
+  const data = await findAllGoods();
+  const dbData = [
+    [
+      "型号",
+      "所属人",
+      "类型",
+      "库存数量",
+      "买入价格",
+      "卖出数量",
+      "总数量",
+      "备注",
+    ],
+  ];
+  data.forEach((item) => {
+    dbData.push([
+      item.type,
+      item.owner,
+      item.genre,
+      item.num,
+      item.purchasePrice,
+      item.sellNum,
+      item.totalNum,
+      item.remark,
+    ]);
+  });
+  const options = {
+    "!cols": [{ width: 15 }, { width: 10 }, { width: 10 }],
+  };
+  const url = "../download/仓库.xlsx";
+  await exportExcelSrv.exExcel(ctx, dbData, options, url);
+  ctx.body = {
+    code: 200,
+    url: "http://localhost:8888/仓库.xlsx",
+  };
+};
 module.exports = {
   getGoods,
   updateGoods,
   DelGoods,
   addGoods,
+  upload,
+  exportExcel,
 };

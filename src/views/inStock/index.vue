@@ -52,6 +52,19 @@
           <el-button type="primary" @click="init" style="margin-left: 30px"
             >刷新</el-button
           >
+          <el-upload
+            action="/api/upload"
+            :file-list="fileList"
+            :show-file-list="false"
+            accept=".xlsx"
+            :on-success="handleSuccess"
+            :headers="{ Authorization: token }"
+          >
+            <el-button size="small" type="primary">导入</el-button>
+          </el-upload>
+          <el-button size="small" type="primary" @click="exportExcel"
+            >导出</el-button
+          >
         </el-col>
       </el-row>
     </el-form>
@@ -141,12 +154,20 @@
 </template>
 
 <script>
-import { addGoods, getGoods, updateGoods, delGoods } from "@/api/storehouse.js";
+import {
+  addGoods,
+  getGoods,
+  updateGoods,
+  delGoods,
+  exportExcel,
+} from "@/api/storehouse.js";
 import { getConfiguration } from "@/api/configuration.js";
 
 export default {
   data() {
     return {
+      token: sessionStorage.getItem("token"),
+      fileList: [],
       query: {
         type: undefined,
         owner: undefined,
@@ -229,6 +250,16 @@ export default {
     },
   },
   methods: {
+    exportExcel() {
+      exportExcel()
+        .then((res) => {
+          console.log(res);
+         window.open(res.url)
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
     init() {
       getGoods(this.query).then((res) => {
         this.tableData = res.data;
@@ -276,6 +307,10 @@ export default {
           return false;
         }
       });
+    },
+    handleSuccess(res, file) {
+      this.$message.success(res.msg);
+      this.init();
     },
   },
 };

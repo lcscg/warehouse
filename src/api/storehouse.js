@@ -31,3 +31,10 @@ export function addGoods(data) {
     data
   })
 }
+
+export function exportExcel() {
+  return request({
+    url: '/api/exportExcel',
+    method: 'get',
+  })
+}
