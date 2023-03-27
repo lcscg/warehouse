@@ -54,8 +54,6 @@ export const constantRoutes = [
       meta: { title: '首页', icon: 'dashboard' }
     }]
   },
-
-  
   {
     path: '/inStock',
     component: Layout,
@@ -65,6 +63,18 @@ export const constantRoutes = [
         name: 'inStock',
         component: () => import('@/views/inStock/index'),
         meta: { title: '库存', icon: 'form' }
+      }
+    ]
+  },
+  {
+    path: '/saleRecord',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'saleRecord',
+        component: () => import('@/views/saleRecord/index'),
+        meta: { title: '出售记录', icon: 'form' }
       }
     ]
   },
@@ -80,6 +90,7 @@ export const constantRoutes = [
       }
     ]
   },
+
   {
     path: 'external-link',
     component: Layout,

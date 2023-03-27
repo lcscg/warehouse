@@ -38,3 +38,27 @@ export function exportExcel() {
     method: 'get',
   })
 }
+
+export function delArrayGoods(data) {
+  return request({
+    url: '/api/delArrayGoods',
+    method: 'Post',
+    data
+  })
+}
+
+export function sellGoods(data) {
+  return request({
+    url: '/api/sellGoods',
+    method: 'Post',
+    data
+  })
+}
+
+export function getSell(params) {
+  return request({
+    url: '/api/getSell',
+    method: 'get',
+    params
+  })
+}

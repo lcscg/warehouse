@@ -47,6 +47,8 @@ delUserRouter.post("/delUser", checkToken, UserController.DelUser);
 // 更新仓库
 const getGoodsRouter = new Router();
 getGoodsRouter.get("/getGoods", checkToken, GoodsController.getGoods);
+const getSellRouter = new Router();
+getSellRouter.get("/getSell", checkToken, GoodsController.getSell);
 const updateGoodsRouter = new Router();
 updateGoodsRouter.post("/updateGoods", checkToken, GoodsController.updateGoods);
 const DelGoodsRouter = new Router();
@@ -57,6 +59,10 @@ const uploadRouter = new Router();
 uploadRouter.post("/upload", checkToken, GoodsController.upload);
 const exportRouter = new Router();
 exportRouter.get("/exportExcel", checkToken, GoodsController.exportExcel);
+const delArrayRouter = new Router();
+delArrayRouter.post("/delArrayGoods", checkToken, GoodsController.delArrayGoods);
+const sellGoodsRouter = new Router();
+sellGoodsRouter.post("/sellGoods", checkToken, GoodsController.sellGoods);
 
 // 配置项
 const getConfigurationRouter = new Router();
@@ -93,12 +99,15 @@ router.use("/api", exportRouter.routes(), exportRouter.allowedMethods());
 router.use("/api", DelGoodsRouter.routes(), DelGoodsRouter.allowedMethods());
 router.use("/api", addGoodsRouter.routes(), addGoodsRouter.allowedMethods());
 router.use("/api", uploadRouter.routes(), uploadRouter.allowedMethods());
+router.use("/api", delArrayRouter.routes(), delArrayRouter.allowedMethods());
+router.use("/api", sellGoodsRouter.routes(), sellGoodsRouter.allowedMethods());
 
 //装载上面四个子路由
 router.use("/api", loginRouter.routes(), loginRouter.allowedMethods());
 router.use("/api", registerRouter.routes(), registerRouter.allowedMethods());
 router.use("/api", userRouter.routes(), userRouter.allowedMethods());
 router.use("/api", delUserRouter.routes(), delUserRouter.allowedMethods());
+router.use("/api", getSellRouter.routes(), getSellRouter.allowedMethods());
 
 //加载路由中间件
 app.use(router.routes()).use(router.allowedMethods());
